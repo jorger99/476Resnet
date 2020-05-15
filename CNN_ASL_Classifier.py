@@ -25,7 +25,7 @@ torch.manual_seed(seed)
 # Designating GPU usage
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 #device = torch.device('cpu')
-torch.cuda.empty_cache() # empty our cache
+torch.cuda.empty_cache() # empty our cache to start off
 
 IMG_PATH = "asl-alphabet_train/"
 print("Setting path to:", IMG_PATH)
@@ -78,7 +78,7 @@ elif response[0] == 'y' or os.path.exists('data/CNNtrain_in.pt') == False:
     print("Did not find presaved tensors. Generating new ones")
 """
 
-print("adding data from images to numpy arrays")
+print("Adding data from images to numpy arrays")
 time.sleep(2)
 
 for letter in letter_lookup.keys():
@@ -87,7 +87,7 @@ for letter in letter_lookup.keys():
         train_in.append(array)
         train_out.append(letter_lookup[letter])
 
-print("shuffling arrays together")
+print("shuffling numpy arrays together")
 train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
 # Loads and shuffles testing data in a pairwise manner
@@ -116,8 +116,8 @@ print("Converting numpy arrays to Float32 tensors")
 # Ensuring type compatibility and assigning to device
 train_in = torch.from_numpy(np.float32(train_in))
 train_out = torch.from_numpy(train_out).long()
-test_in = torch.from_numpy(np.float32(test_in))
-test_out = torch.from_numpy(test_out).long()
+test_in = torch.from_numpy(np.float32(test_in)).to(device)
+test_out = torch.from_numpy(test_out).long().to(device)
 
 """
 # save these tensors for future use
@@ -159,7 +159,7 @@ class Sign_Net(nn.Module):
         # Pooled relu activated output from second convolutional layer
         x = self.pool(F.relu(x))
         # Determining input dim for first fully connected layer
-        x = x.view(b_size, 16 * 47**2)
+        x = x.reshape(b_size, 16 * 47**2)
         # Relu activated output from first fully connected layer
         x = F.relu(self.fc1(x))
         # Activationless output from second fully connected layer
@@ -179,7 +179,7 @@ for e in range(epochs):
         b_end = (b+1) * b_size
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
-
+        print("Batch: ",b,":",batches)
         # Zeroes out gradient parameters
         opti.zero_grad()
 
@@ -195,6 +195,8 @@ for e in range(epochs):
 
         # Adjusts weights
         opti.step()
+
+        torch.cuda.empty_cache() # empty our cache per batch
 
 
 
