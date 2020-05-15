@@ -24,7 +24,6 @@ torch.manual_seed(seed)
 
 # Designating GPU usage
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-#device = torch.device('cpu')
 torch.cuda.empty_cache() # empty our cache to start off
 
 IMG_PATH = "asl-alphabet_train/"
@@ -119,14 +118,6 @@ train_out = torch.from_numpy(train_out).long()
 test_in = torch.from_numpy(np.float32(test_in))
 test_out = torch.from_numpy(test_out).long()
 
-"""
-# save these tensors for future use
-torch.save(train_in, 'data/CNNtrain_in.pt')
-torch.save(train_out, 'data/CNNtrain_out.pt')
-torch.save(test_in, 'data/CNNtest_in.pt')
-torch.save(test_out, 'data/CNNtest_out.pt')
-"""
-
 print("=========== Establishing Network Parameters: ===========")
 # Network hyperparameters
 learn_rate = .001
@@ -170,6 +161,7 @@ class Sign_Net(nn.Module):
 net = Sign_Net().to(device)
 loss = nn.CrossEntropyLoss()
 opti = opt.Adam(net.parameters(), lr = learn_rate)
+train_accs = [] # Stores training accuracies
 val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
@@ -182,9 +174,6 @@ for e in range(epochs):
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
 
-
-        #print("Batch: ",b+1,":",batches)
-
         # Zeroes out gradient parameters
         opti.zero_grad()
 
@@ -194,6 +183,7 @@ for e in range(epochs):
         # Computes loss and accuracy of network predictions with respect to actual labels
         train_loss = loss(train_pred, batch_out)
         train_acc = accuracy(train_pred, batch_out)
+        train_accs.append(train_acc.item())
 
         # Back propagation of gradient
         train_loss.backward()
@@ -204,8 +194,6 @@ for e in range(epochs):
         # memory leaks
         del batch_in, batch_out
         torch.cuda.empty_cache() # empty our cache per batch
-
-
 
     with torch.no_grad():
         test_pred = net(test_in.to(device))
