@@ -61,22 +61,7 @@ train_num = 300 # the number of each letter to load for training (out of a total
 train_in = []
 train_out = []
 
-print("training on",train_num,"images per letter")
-"""
-print("Checking to see if we have presaved tensors")
-if os.path.exists('data/CNNtrain_in.pt') == True:
-    question = "Found files. Would you like to still generate new ones?"
-    response = str(input(question+' (y/n): ')).lower().strip()
-    if response[0] == 'n':
-        print("loading tensors")
-        torch.load('data/CNNtrain_in.pt', map_location=device)
-        torch.load('data/CNNtrain_out.pt', map_location=device)
-        torch.load('data/CNNtest_in.pt', map_location=device)
-        torch.load('data/CNNtest_out.pt', map_location=device)
-elif response[0] == 'y' or os.path.exists('data/CNNtrain_in.pt') == False:
-
-    print("Did not find presaved tensors. Generating new ones")
-"""
+print("Training on",train_num,"images per letter")
 
 print("Adding data from images to numpy arrays")
 time.sleep(2)
@@ -119,16 +104,8 @@ train_out = torch.from_numpy(train_out).long()
 test_in = torch.from_numpy(np.float32(test_in))
 test_out = torch.from_numpy(test_out).long()
 
-"""
-# save these tensors for future use
-torch.save(train_in, 'data/CNNtrain_in.pt')
-torch.save(train_out, 'data/CNNtrain_out.pt')
-torch.save(test_in, 'data/CNNtest_in.pt')
-torch.save(test_out, 'data/CNNtest_out.pt')
-"""
-
-print("=========== Establishing Network Parameters: ===========")
 # Network hyperparameters
+print("=========== Establishing Network Parameters: ===========")
 learn_rate = .001
 epochs = 20
 b_frac = .1
@@ -182,7 +159,6 @@ for e in range(epochs):
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
 
-
         #print("Batch: ",b+1,":",batches)
 
         # Zeroes out gradient parameters
@@ -229,3 +205,12 @@ for b in range(batches):
         test_accs.append(accuracy(test_pred, batch_out).item())
 
 print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))
+
+print("Make some nice plots")
+
+# Add some plotting features
+fig = plt.figure()
+plt.plot(range(batches), val_accs, label="val acc")
+plt.plot(range(batches), test_accs, label="val acc")
+plt.legend()
+plt.show()
