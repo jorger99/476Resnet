@@ -116,8 +116,8 @@ print("Converting numpy arrays to Float32 tensors")
 # Ensuring type compatibility and assigning to device
 train_in = torch.from_numpy(np.float32(train_in))
 train_out = torch.from_numpy(train_out).long()
-test_in = torch.from_numpy(np.float32(test_in)).to(device)
-test_out = torch.from_numpy(test_out).long().to(device)
+test_in = torch.from_numpy(np.float32(test_in))
+test_out = torch.from_numpy(test_out).long()
 
 """
 # save these tensors for future use
@@ -179,7 +179,7 @@ for e in range(epochs):
         b_end = (b+1) * b_size
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
-        print("Batch: ",b,":",batches)
+        print("Batch: ",b+1,":",batches)
         # Zeroes out gradient parameters
         opti.zero_grad()
 
@@ -196,13 +196,15 @@ for e in range(epochs):
         # Adjusts weights
         opti.step()
 
+        # memory leaks
+        del batch_in, batch_out
         torch.cuda.empty_cache() # empty our cache per batch
 
 
 
     with torch.no_grad():
-        test_pred = net(test_in)
-        test_acc = accuracy(test_pred, test_out)
+        test_pred = net(test_in.to(device))
+        test_acc = accuracy(test_pred, test_out.to(device))
         test_accs.append(test_acc.item())
 
         print("Epoch: " + str(e+1) + ", Accuracy: " + str(round(train_acc.item(),2)))
