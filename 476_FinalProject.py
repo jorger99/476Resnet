@@ -16,16 +16,16 @@ import time
 from PIL import Image
 
 seed = 7
-print("setting seed to:", seed) 
+print("setting seed to:", seed)
 
 np.random.seed(seed)
 torch.manual_seed(seed)
 
 # Designating GPU usage
-#device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+#device = torch.device('cpu')
 
-IMG_PATH = "/home/jorge_ramirezortiz99/GitHub/476Resnet/asl-alphabet_train/"
+IMG_PATH = "/home/jorger99/GitHub/476Resnet/asl-alphabet_train/"
 print("Setting path to:", IMG_PATH)
 
 # Functions for loading images, shuffling data, and calculating accuracy of network predictions
@@ -34,7 +34,8 @@ def load_images(letter, N = 10):
     for i in range(N):
         if i % (N/2) == 1:
             print("adding:",letter, i,"/",N)
-        image = Image.open(IMG_PATH+letter+"/"+letter+str(i+1)+".jpg")
+        path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
+        image = Image.open(path_string)
         array = np.asarray(image)
         arrays.append(array)
     return np.array(arrays)
@@ -54,7 +55,7 @@ letter_lookup = {letter: i for i, letter in enumerate(["A", "B", "C", "D", "E", 
                                                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"])}
 
 # Loads and shuffles training data in a pairwise manner
-train_num = 1000 # the number of each letter to load for training (out of a total of 3000)
+train_num = 500 # the number of each letter to load for training (out of a total of 3000)
 train_in = []
 train_out = []
 
@@ -72,7 +73,7 @@ print("shuffling arrays together")
 train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
 # Loads and shuffles testing data in a pairwise manner
-test_num = 50 # the number of each letter to load for training
+test_num = 50 # the number of each letter to load for testing
 test_in = []
 test_out = []
 for letter in letter_lookup.keys():
@@ -80,23 +81,25 @@ for letter in letter_lookup.keys():
     for array in arrays:
         test_in.append(array)
         test_out.append(letter_lookup[letter])
-      
+
 test_in, test_out = unison_shuffled_copies(np.array(test_in), np.array(test_out))
 
-print("Shifting, Normalizing, and Casting Data")
+print("Shifting Axes of Data")
 # Rearranging image dimensions to be compatible with PyTorch
 train_in = np.moveaxis(train_in, -1, 1)
 test_in = np.moveaxis(test_in, -1, 1)
 
+print("Normalizing Data")
 # Normalizing data
 train_in = train_in / 255
 test_in = test_in / 255
 
-# Ensuring type compatibility 
-train_in = torch.from_numpy(np.float32(train_in))
-train_out = torch.from_numpy(train_out).long()
-test_in = torch.from_numpy(np.float32(test_in))
-test_out = torch.from_numpy(test_out).long()
+print("Converting to Float32")
+# Ensuring type compatibility and assigning to device
+train_in = torch.from_numpy(np.float32(train_in)).to(device)
+train_out = torch.from_numpy(train_out).long().to(device)
+test_in = torch.from_numpy(np.float32(test_in)).to(device)
+test_out = torch.from_numpy(test_out).long().to(device)
 
 print("Establishing Network Parameters:")
 # Network hyperparameters
@@ -106,7 +109,7 @@ b_frac = .1
 batches = int(1/b_frac)
 b_size = int(b_frac*train_in.shape[0])
 
-print("Learn Rate:", learn_rate)
+print("Learning Rate:", learn_rate)
 print("Epochs:", epochs)
 print("Batches:", batches)
 print("Batch Size", b_size)
@@ -121,7 +124,7 @@ class Sign_Net(nn.Module):
         self.pool = nn.MaxPool2d(2,2)
         self.fc1 = nn.Linear(16 * 47**2, 100)
         self.fc2 = nn.Linear(100, 29)
-        
+
     def forward(self, x):
         # Pooled relu activated output from first convolutional layer
         x = self.pool(F.relu(self.c1(x)))
@@ -141,46 +144,50 @@ class Sign_Net(nn.Module):
 net = Sign_Net().to(device)
 loss = nn.CrossEntropyLoss()
 opti = opt.Adam(net.parameters(), lr = learn_rate)
+test_accs = []  # store accuracy
 
 # Data iteration loop for training
 for e in range(epochs):
     for b in range(batches):
         b_start = b * b_size
         b_end = (b+1) * b_size
-        batch_in = train_in[b_start : b_end].to(device)
-        batch_out = train_out[b_start : b_end].to(device)
+        batch_in = train_in[b_start : b_end]
+        batch_out = train_out[b_start : b_end]
 
-        # Zeroes out gradient parameters 
-        opti.zero_grad() 
-        
+        # Zeroes out gradient parameters
+        opti.zero_grad()
+
         # Predicted output as determined by current network state
         train_pred = net(batch_in)
-        
+
         # Computes loss and accuracy of network predictions with respect to actual labels
         train_loss = loss(train_pred, batch_out)
         train_acc = accuracy(train_pred, batch_out)
-        
+
         # Back propagation of gradient
         train_loss.backward()
-        
+
         # Adjusts weights
         opti.step()
-        
-    print("Epoch: " + str(e+1) + ", Accuracy: " + str(round(train_acc.item(),2)))
+
+
+    with torch.no_grad():
+        test_pred = net(test_in)
+        test_acc = accuracy(test_pred, test_out)
+        test_accs.append(test_acc.item())
+
+        print("Epoch: " + str(e+1) + ", Accuracy: " + str(round(train_acc.item(),2)))
 
 # Testing iteration loop
-test_accs = []
 b_size = int(b_frac*test_in.shape[0])
 for b in range(batches):
         b_start = b * b_size
         b_end = (b+1) * b_size
-        batch_in = test_in[b_start : b_end].to(device)
-        batch_out = test_out[b_start : b_end].to(device)  
-        
+        batch_in = test_in[b_start : b_end]
+        batch_out = test_out[b_start : b_end]
+
         # Computes loss and accuracy of network predictions with respect to actual labels
         test_pred = net(batch_in)
         test_accs.append(accuracy(test_pred, batch_out).item())
 
 print("Testing accuracy: " + str(round(sum(test_accs)/batches,2)))
-
-
