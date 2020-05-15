@@ -22,7 +22,8 @@ np.random.seed(seed)
 torch.manual_seed(seed)
 
 # Designating GPU usage
-device = torch.device("cuda:0")
+#device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 
 IMG_PATH = "/home/jorge_ramirezortiz99/GitHub/476Resnet/asl-alphabet_train/"
 print("Setting path to:", IMG_PATH)
@@ -32,7 +33,7 @@ def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
         if i % (N/2) == 1:
-            print("adding:",letter, i+"/"+N)
+            print("adding:",letter, i,"/",N)
         image = Image.open(IMG_PATH+letter+"/"+letter+str(i+1)+".jpg")
         array = np.asarray(image)
         arrays.append(array)
