@@ -151,7 +151,7 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
-print("=========== Training Net ============")
+print("==================== Training Net ======================")
 for e in range(epochs):
     for b in range(batches):
         b_start = b * b_size
@@ -206,11 +206,7 @@ for b in range(batches):
 
 print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))
 
-print("Make some nice plots")
 
-# Add some plotting features
-fig = plt.figure()
-plt.plot(range(batches), val_accs, label="val acc")
-plt.plot(range(batches), test_accs, label="val acc")
-plt.legend()
-plt.show()
+# Save data for plotting purposes
+np.save("data/CNN_val_accs.npy", val_accs)
+np.save("data/CNN_train_accs.npy", train_accs)
