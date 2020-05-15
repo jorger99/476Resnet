@@ -21,7 +21,7 @@ plt.rcParams.update({'text.usetex': False,
                      'lines.linewidth': 3,
                      'font.family': 'sans-serif',
                      'font.serif': 'Helvetica',
-                     'font.size': 14,
+                     'font.size': 16,
                      'xtick.labelsize': 'large',
                      'ytick.labelsize': 'large',
                      'axes.labelsize': 'large',
@@ -46,24 +46,33 @@ data_loc = "data/{}"   # save data in "data" folder
 
 
 """ load data from data_loc based on expected name """
-
 CNN_train_accs = np.load(data_loc.format("CNN_train_accs.npy"))
 CNN_val_accs = np.load(data_loc.format("CNN_val_accs.npy"))
 
-# create batch size x-dataset
+# create batch size x-axis for CNN (list of nums from 1-20)
 epochs = [x + 1 for x in range(20)]
 
+Resnet_val_accs = np.load("data/Resnet_val_accs.npy")
+Resnet_val_accs_xaxis = np.load("data/Resnet_val_accs_xaxis.npy")
+Resnet_train_accs = np.load("data/Resnet_train_accs.npy")
+Resnet_train_accs_xaxis = np.load("data/Resnet_train_accs_xaxis.npy")
+
+""" plotting """
 fig = plt.figure()
-plt.plot(epochs, CNN_train_accs, label="CNN Train_Acc", color="b", linestyle="--")
-plt.plot(epochs, CNN_val_accs, label="CNN Val_Acc", color="b")
+plt.plot(epochs, CNN_train_accs, label="CNN Training Acc", color="b", linestyle="--")
+plt.plot(epochs, CNN_val_accs, label="CNN Validation Acc", color="b")
 
-#plt.plot(range(20), Resnet_train_accs, label="Resnet Val_Acc", color="r", linestyle="--")
-#plt.plot(range(20), Resnet_val_accs, label="Resnet Val_Acc", color="r")
+plt.plot(Resnet_train_accs_xaxis, Resnet_train_accs, label="Resnet Training Acc", color="r", linestyle="--")
+plt.plot(Resnet_val_accs_xaxis, Resnet_val_accs, label="Resnet Val_Acc", color="r")
 
-plt.xticks(epochs)
+# need to do this to add a 0 tick mark
+x_ticks_epochs = epochs.insert(0,0)
+plt.xticks(x_ticks_epochs)
 
 plt.xlabel("Epoch No.")
 plt.ylabel("Accuracy [%]")
+
+plt.title("Resnet Vs CNN Comparison: Identifying American Sign Language Handsigns")
 
 plt.legend()
 plt.show()
