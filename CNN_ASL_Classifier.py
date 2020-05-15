@@ -62,66 +62,70 @@ train_in = []
 train_out = []
 
 print("training on",train_num,"images per letter")
-
+"""
 print("Checking to see if we have presaved tensors")
-if os.path.exists('data/train_in.pt') == True:
-    question = "Found files. Would you like to still generate new ones? [y/n]"
-    response = str(raw_input(question+' (y/n): ')).lower().strip()
-    if respone[0] == 'n':
-        torch.load('data/CNNtrain_in.pt')
-        torch.load('data/CNNtrain_out.pt')
-        torch.load('data/CNNtest_in.pt')
-        torch.load('data/CNNtest_out.pt')
+if os.path.exists('data/CNNtrain_in.pt') == True:
+    question = "Found files. Would you like to still generate new ones?"
+    response = str(input(question+' (y/n): ')).lower().strip()
+    if response[0] == 'n':
+        print("loading tensors")
+        torch.load('data/CNNtrain_in.pt', map_location=device)
+        torch.load('data/CNNtrain_out.pt', map_location=device)
+        torch.load('data/CNNtest_in.pt', map_location=device)
+        torch.load('data/CNNtest_out.pt', map_location=device)
+elif response[0] == 'y' or os.path.exists('data/CNNtrain_in.pt') == False:
 
-else:
     print("Did not find presaved tensors. Generating new ones")
-    print("adding data from images to numpy arrays")
-    time.sleep(3)
+"""
 
-    for letter in letter_lookup.keys():
-        arrays = load_images(letter,train_num)
-        for array in arrays:
-            train_in.append(array)
-            train_out.append(letter_lookup[letter])
+print("adding data from images to numpy arrays")
+time.sleep(2)
 
-    print("shuffling arrays together")
-    train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
+for letter in letter_lookup.keys():
+    arrays = load_images(letter,train_num)
+    for array in arrays:
+        train_in.append(array)
+        train_out.append(letter_lookup[letter])
 
-    # Loads and shuffles testing data in a pairwise manner
-    test_num = 50 # the number of each letter to load for testing
-    test_in = []
-    test_out = []
-    for letter in letter_lookup.keys():
-        arrays = load_images(letter,test_num)
-        for array in arrays:
-            test_in.append(array)
-            test_out.append(letter_lookup[letter])
+print("shuffling arrays together")
+train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
-    test_in, test_out = unison_shuffled_copies(np.array(test_in), np.array(test_out))
+# Loads and shuffles testing data in a pairwise manner
+test_num = 50 # the number of each letter to load for testing
+test_in = []
+test_out = []
+for letter in letter_lookup.keys():
+    arrays = load_images(letter,test_num)
+    for array in arrays:
+        test_in.append(array)
+        test_out.append(letter_lookup[letter])
 
-    print("Shifting Axes of Data")
-    # Rearranging image dimensions to be compatible with PyTorch
-    train_in = np.moveaxis(train_in, -1, 1)
-    test_in = np.moveaxis(test_in, -1, 1)
+test_in, test_out = unison_shuffled_copies(np.array(test_in), np.array(test_out))
 
-    print("Normalizing Data")
-    # Normalizing data
-    train_in = train_in / 255
-    test_in = test_in / 255
+print("Shifting Axes of Data")
+# Rearranging image dimensions to be compatible with PyTorch
+train_in = np.moveaxis(train_in, -1, 1)
+test_in = np.moveaxis(test_in, -1, 1)
 
-    print("Converting numpy arrays to Float32 tensors")
-    # Ensuring type compatibility and assigning to device
-    train_in = torch.from_numpy(np.float32(train_in))
-    train_out = torch.from_numpy(train_out).long()
-    test_in = torch.from_numpy(np.float32(test_in))
-    test_out = torch.from_numpy(test_out).long()
+print("Normalizing Data")
+# Normalizing data
+train_in = train_in / 255
+test_in = test_in / 255
 
+print("Converting numpy arrays to Float32 tensors")
+# Ensuring type compatibility and assigning to device
+train_in = torch.from_numpy(np.float32(train_in))
+train_out = torch.from_numpy(train_out).long()
+test_in = torch.from_numpy(np.float32(test_in))
+test_out = torch.from_numpy(test_out).long()
+
+"""
 # save these tensors for future use
 torch.save(train_in, 'data/CNNtrain_in.pt')
 torch.save(train_out, 'data/CNNtrain_out.pt')
 torch.save(test_in, 'data/CNNtest_in.pt')
 torch.save(test_out, 'data/CNNtest_out.pt')
-
+"""
 
 print("Establishing Network Parameters:")
 # Network hyperparameters
