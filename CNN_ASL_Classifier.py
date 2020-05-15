@@ -111,10 +111,10 @@ else:
 
     print("Converting numpy arrays to Float32 tensors")
     # Ensuring type compatibility and assigning to device
-    train_in = torch.from_numpy(np.float32(train_in)).to(device)
-    train_out = torch.from_numpy(train_out).long().to(device)
-    test_in = torch.from_numpy(np.float32(test_in)).to(device)
-    test_out = torch.from_numpy(test_out).long().to(device)
+    train_in = torch.from_numpy(np.float32(train_in))
+    train_out = torch.from_numpy(train_out).long()
+    test_in = torch.from_numpy(np.float32(test_in))
+    test_out = torch.from_numpy(test_out).long()
 
 # save these tensors for future use
 torch.save(train_in, 'data/CNNtrain_in.pt')
@@ -173,8 +173,8 @@ for e in range(epochs):
     for b in range(batches):
         b_start = b * b_size
         b_end = (b+1) * b_size
-        batch_in = train_in[b_start : b_end]
-        batch_out = train_out[b_start : b_end]
+        batch_in = train_in[b_start : b_end].to(device)
+        batch_out = train_out[b_start : b_end].to(device)
 
         # Zeroes out gradient parameters
         opti.zero_grad()
@@ -193,6 +193,7 @@ for e in range(epochs):
         opti.step()
 
 
+
     with torch.no_grad():
         test_pred = net(test_in)
         test_acc = accuracy(test_pred, test_out)
@@ -205,8 +206,8 @@ b_size = int(b_frac*test_in.shape[0])
 for b in range(batches):
         b_start = b * b_size
         b_end = (b+1) * b_size
-        batch_in = test_in[b_start : b_end]
-        batch_out = test_out[b_start : b_end]
+        batch_in = test_in[b_start : b_end].to(device)
+        batch_out = test_out[b_start : b_end].to(device)
 
         # Computes loss and accuracy of network predictions with respect to actual labels
         test_pred = net(batch_in)
