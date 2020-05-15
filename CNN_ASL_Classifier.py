@@ -34,7 +34,7 @@ print("Setting path to:", IMG_PATH)
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
-        if i === N:
+        if i == N:
             print("adding:",letter, i,"/",N)
         path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
         image = Image.open(path_string)
@@ -212,7 +212,7 @@ for e in range(epochs):
         val_acc = accuracy(test_pred, test_out.to(device))
         val_accs.append(val_acc.item())
 
-        print("Epoch: " + str(e+1) + ", Training accuracy: " + str(round(train_acc.item(),2)), 
+        print("Epoch: " + str(e+1) + ", Training accuracy: " + str(round(train_acc.item(),2)),
                                   + "Validation accuracy: " + str(round(val_acc.item(),2)))
 
 # Testing iteration loop
