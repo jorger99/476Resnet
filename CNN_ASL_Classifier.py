@@ -127,9 +127,9 @@ torch.save(test_in, 'data/CNNtest_in.pt')
 torch.save(test_out, 'data/CNNtest_out.pt')
 """
 
-print("Establishing Network Parameters:")
+print("=========== Establishing Network Parameters: ===========")
 # Network hyperparameters
-learn_rate = .005
+learn_rate = .001
 epochs = 20
 b_frac = .1
 batches = int(1/b_frac)
@@ -213,8 +213,8 @@ for e in range(epochs):
         val_accs.append(val_acc.item())
 
         print("Epoch: " + str(e+1) + ", Training accuracy: " +\
-        str(round(train_acc.item(),2)), + "Validation accuracy: " +\
-        str(round(val_acc.item(),2)))
+        str(round(train_acc.item(),4)) + ", Validation accuracy: " +\
+        str(round(val_acc.item(),4)))
 
 # Testing iteration loop
 b_size = int(b_frac*test_in.shape[0])
@@ -228,4 +228,4 @@ for b in range(batches):
         test_pred = net(batch_in)
         test_accs.append(accuracy(test_pred, batch_out).item())
 
-print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches,2)))
+print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))
