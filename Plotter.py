@@ -65,12 +65,13 @@ plt.plot(epochs, CNN_val_accs, label="CNN Validation Acc", color="b")
 plt.plot(Resnet_train_accs_xaxis, Resnet_train_accs, label="Resnet Training Acc", color="r", linestyle="--")
 plt.plot(Resnet_val_accs_xaxis, Resnet_val_accs, label="Resnet Val_Acc", color="r")
 
-# need to do this to add a 0 tick mark
-x_ticks_epochs = epochs.insert(0,0)
-plt.xticks(x_ticks_epochs)
+plt.xticks(np.arange(0,21, 2))
 
 plt.xlabel("Epoch No.")
 plt.ylabel("Accuracy [%]")
+
+plt.text(x=12.2,y=0.7,s="Final CNN Val: {:.4f}%".format(CNN_val_accs[-1]*100))
+plt.text(x=12.2,y=0.65,s="Final Resnet Val: {:.1f}%".format(Resnet_val_accs[-1]*100))
 
 plt.title("Resnet Vs CNN Comparison: Identifying American Sign Language Handsigns")
 
