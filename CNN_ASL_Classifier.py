@@ -34,7 +34,7 @@ print("Setting path to:", IMG_PATH)
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
-        if i % (N/2) == 1:
+        if i % (N) == 0:
             print("adding:",letter, i,"/",N)
         path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
         image = Image.open(path_string)
@@ -159,7 +159,7 @@ class Sign_Net(nn.Module):
         # Pooled relu activated output from second convolutional layer
         x = self.pool(F.relu(x))
         # Determining input dim for first fully connected layer
-        x = x.reshape(b_size, 16 * 47**2)
+        x = x.reshape(-1, 16 * 47**2)
         # Relu activated output from first fully connected layer
         x = F.relu(self.fc1(x))
         # Activationless output from second fully connected layer
@@ -179,7 +179,10 @@ for e in range(epochs):
         b_end = (b+1) * b_size
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
-        print("Batch: ",b+1,":",batches)
+
+        
+        #print("Batch: ",b+1,":",batches)
+
         # Zeroes out gradient parameters
         opti.zero_grad()
 
