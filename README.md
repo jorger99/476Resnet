@@ -14,4 +14,4 @@ ResNet however, was already extensively trained through multiple different datas
 Once the pre-processing through a feature extractor is completed, network specific feature vectors can be trained and hyperparameters can be tuned.
 
 
-This process can be applied to medical imaging for detecting tumors and abnormalities through scans, classifying huge documents and texts in databases by genre or keyword, or removing unusual objects in astronomical imaging from telescope captures
+To name a few further applications of this process, it can be applied to medical imaging for detecting tumors and abnormalities through scans, classifying huge documents and texts in databases by genre or keyword, or removing unusual objects in astronomical imaging from telescope captures
