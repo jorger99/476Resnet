@@ -212,7 +212,8 @@ for e in range(epochs):
         val_acc = accuracy(test_pred, test_out.to(device))
         val_accs.append(val_acc.item())
 
-        print("Epoch: " + str(e+1) + ", Accuracy: " + str(round(train_acc.item(),2)))
+        print("Epoch: " + str(e+1) + ", Training accuracy: " + str(round(train_acc.item(),2)), 
+                                  + "Validation accuracy: " + str(round(val_acc.item(),2)))
 
 # Testing iteration loop
 b_size = int(b_frac*test_in.shape[0])
