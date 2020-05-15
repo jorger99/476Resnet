@@ -12,3 +12,6 @@ Multiple people are able to use the same feature extractor due to low level feat
 In this class, the convolutional neural nets we've created in the past perform low-level extraction early on, as Alex will discuss. If within the second example, we had a the last convolutional layer feed into a different fully-connected neural net, this would mimick the intention of ResNet
 ResNet however, was already extensively trained, and as such can be used in various applications, while creating a similar feature extractor through our code would require more rigorous training than just the dataset we are using.
 Once the pre-processing through a feature extractor is completed, network specific feature vectors can be trained and hyperparameters can be tuned.
+
+
+This process can be applied to medical imaging for detecting tumors and abnormalities through scans, classifying huge documents and texts in databases by genre or keyword, and removing unusual objects in astronomical imaging from telescope captures
