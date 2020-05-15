@@ -10,9 +10,9 @@ Machine Learning 476 @ UMDCP, Cameron/Alex/Angel/Jorge Final Project
 
 (3) download the dataset from Kaggle at [this link](https://www.kaggle.com/grassknoted/asl-alphabet).
 
-   (A) download the .zip file for the dataset, and unzip it into the directory, making sure the images are only one folder deep (e.g. /asl-alphabet_train/A/A1.jpg, instead of asl-alphabet_train/asl-alphabet_train/A/A1.jpg) which will happen when unzipping
+- (A) download the .zip file for the dataset, and unzip it into the directory, making sure the images are only one folder deep (e.g. /asl-alphabet_train/A/A1.jpg, instead of asl-alphabet_train/asl-alphabet_train/A/A1.jpg) which will happen when unzipping
    
-   (B) if only using a terminal, use the kaggle API: `pip3 install kaggle`, `kaggle datasets download -d grassknoted/asl-alphabet`, then `mv` and `unzip` the file, and finally use `rsync` to fix the images being two folders deep
+- (B) if only using a terminal, use the kaggle API: `pip3 install kaggle`, `kaggle datasets download -d grassknoted/asl-alphabet`, then `mv` and `unzip` the file, and finally use `rsync` to fix the images being two folders deep
    
 (4) run the python scripts with `python3 <scriptname>.py`
 
