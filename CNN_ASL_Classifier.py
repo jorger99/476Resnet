@@ -170,7 +170,8 @@ class Sign_Net(nn.Module):
 net = Sign_Net().to(device)
 loss = nn.CrossEntropyLoss()
 opti = opt.Adam(net.parameters(), lr = learn_rate)
-test_accs = []  # store accuracy
+val_accs = [] # Stores validation accuracies
+test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
 for e in range(epochs):
@@ -207,8 +208,8 @@ for e in range(epochs):
 
     with torch.no_grad():
         test_pred = net(test_in.to(device))
-        test_acc = accuracy(test_pred, test_out.to(device))
-        test_accs.append(test_acc.item())
+        val_acc = accuracy(test_pred, test_out.to(device))
+        val_accs.append(val_acc.item())
 
         print("Epoch: " + str(e+1) + ", Accuracy: " + str(round(train_acc.item(),2)))
 
