@@ -127,9 +127,9 @@ torch.save(test_in, 'data/CNNtest_in.pt')
 torch.save(test_out, 'data/CNNtest_out.pt')
 """
 
-print("Establishing Network Parameters:")
+print("=========== Establishing Network Parameters: ===========")
 # Network hyperparameters
-learn_rate = .005
+learn_rate = .001
 epochs = 20
 b_frac = .1
 batches = int(1/b_frac)
