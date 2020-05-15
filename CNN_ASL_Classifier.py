@@ -14,7 +14,9 @@ import torch.nn.functional as F
 import torch.optim as opt
 import time
 import os.path
+import timeit
 from PIL import Image
+
 
 seed = 7
 print("setting seed to:", seed)
@@ -151,6 +153,7 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
+start_time = timeit.timeit()
 print("==================== Training Net ======================")
 for e in range(epochs):
 
@@ -207,6 +210,9 @@ for b in range(batches):
         # Computes loss and accuracy of network predictions with respect to actual labels
         test_pred = net(batch_in)
         test_accs.append(accuracy(test_pred, batch_out).item())
+
+end_time = timeit.timeit()
+print("Time Elapsed: ", end_time-start_time)
 
 print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))
 
