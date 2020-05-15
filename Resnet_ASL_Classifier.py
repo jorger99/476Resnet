@@ -114,14 +114,14 @@ history = model.fit(
     epochs =  10,
     batch_size=32)
 
+print('Final val_accuracy:', history.history['val_accuracy'][-1])
+
 Resnet_val_accs = history.history['val_accuracy']
 Resnet_val_accs_xaxis = np.arange(1,len(history.history['loss'])+1,1)
 Resnet_train_accs = history.history['accuracy']
 Resnet_train_accs_xaxis = np.arange(.5,len(history.history['loss'])+.5,1)
 
-np.save("data/CNN_val_accs.npy", Resnet_val_accs)
-np.save("data/CNN_val_accs_xaxis.npy", Resnet_val_accs_xaxis)
 np.save("data/Resnet_val_accs.npy", Resnet_val_accs)
 np.save("data/Resnet_val_accs_xaxis.npy", Resnet_val_accs_xaxis)
-
-print('Final val_accuracy:', history.history['val_accuracy'][-1])
+np.save("data/Resnet_train_accs.npy", Resnet_train_accs)
+np.save("data/Resnet_train_accs_xaxis.npy", Resnet_train_accs_xaxis)
