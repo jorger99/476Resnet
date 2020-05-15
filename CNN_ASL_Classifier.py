@@ -34,7 +34,7 @@ print("Setting path to:", IMG_PATH)
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
-        if i === N:
+        if i == N:
             print("adding:",letter, i,"/",N)
         path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
         image = Image.open(path_string)
