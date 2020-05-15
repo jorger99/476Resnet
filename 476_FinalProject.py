@@ -15,18 +15,23 @@ import torch.optim as opt
 from PIL import Image
 
 seed = 7
+print("setting seed to:", seed) 
+
 np.random.seed(seed)
 torch.manual_seed(seed)
 
 # Designating GPU usage
 device = torch.device("cuda:0")
 
-IMG_PATH = "/Users/alex/Documents/Python/asl-alphabet/asl_alphabet_train/"
+IMG_PATH = "/home/jorge_ramirezortiz99/GitHub/476Resnet/asl-alphabet_train/"
+print("Setting path to:", IMG_PATH)
 
 # Functions for loading images, shuffling data, and calculating accuracy of network predictions
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
+	if i % 10 == 1:
+	    print(letter, i)
         image = Image.open(IMG_PATH+letter+"/"+letter+str(i+1)+".jpg")
         array = np.asarray(image)
         arrays.append(array)
@@ -47,15 +52,18 @@ letter_lookup = {letter: i for i, letter in enumerate(["A", "B", "C", "D", "E", 
                                                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"])}
 
 # Loads and shuffles training data in a pairwise manner
-train_num = 200 # the number of each letter to load for training (out of a total of 3000)
+train_num = 3000 # the number of each letter to load for training (out of a total of 3000)
 train_in = []
 train_out = []
+
+print("adding letters to numpy arrays")
 for letter in letter_lookup.keys():
     arrays = load_images(letter,train_num)
     for array in arrays:
         train_in.append(array)
         train_out.append(letter_lookup[letter])
-      
+
+print("shuffling arrays together")
 train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
 # Loads and shuffles testing data in a pairwise manner
@@ -70,13 +78,14 @@ for letter in letter_lookup.keys():
       
 test_in, test_out = unison_shuffled_copies(np.array(test_in), np.array(test_out))
 
+print("Shifting, Normalizing, and Casting Data")
 # Rearranging image dimensions to be compatible with PyTorch
 train_in = np.moveaxis(train_in, -1, 1)
 test_in = np.moveaxis(test_in, -1, 1)
 
 # Normalizing data
-train_in = train_in / 255.
-test_in = test_in / 255.
+train_in = train_in / 255
+test_in = test_in / 255
 
 # Ensuring type compatibility 
 train_in = torch.from_numpy(np.float32(train_in))
@@ -84,12 +93,18 @@ train_out = torch.from_numpy(train_out).long()
 test_in = torch.from_numpy(np.float32(test_in))
 test_out = torch.from_numpy(test_out).long()
 
+print("Establishing Network Parameters:")
 # Network hyperparameters
 learn_rate = .005
 epochs = 10
 b_frac = .1
 batches = int(1/b_frac)
 b_size = int(b_frac*train_in.shape[0])
+
+print("Learn Rate:", learn_rate)
+print("Epochs:", epochs)
+print("Batches:", batches)
+print("Batch Size", b_size)
 
 # Defines a CNN class inheriting from the Module base class
 class Sign_Net(nn.Module):
