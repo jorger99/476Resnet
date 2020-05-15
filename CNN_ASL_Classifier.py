@@ -87,7 +87,7 @@ for letter in letter_lookup.keys():
         train_in.append(array)
         train_out.append(letter_lookup[letter])
 
-print("shuffling numpy arrays together")
+print("Shuffling numpy arrays together")
 train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
 # Loads and shuffles testing data in a pairwise manner
@@ -212,8 +212,9 @@ for e in range(epochs):
         val_acc = accuracy(test_pred, test_out.to(device))
         val_accs.append(val_acc.item())
 
-        print("Epoch: " + str(e+1) + ", Training accuracy: " + str(round(train_acc.item(),2)),
-                                  + "Validation accuracy: " + str(round(val_acc.item(),2)))
+        print("Epoch: " + str(e+1) + ", Training accuracy: " +\
+        str(round(train_acc.item(),2)), + "Validation accuracy: " +\
+        str(round(val_acc.item(),2)))
 
 # Testing iteration loop
 b_size = int(b_frac*test_in.shape[0])
