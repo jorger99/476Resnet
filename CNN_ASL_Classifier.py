@@ -103,9 +103,8 @@ train_out = torch.from_numpy(train_out).long()
 test_in = torch.from_numpy(np.float32(test_in))
 test_out = torch.from_numpy(test_out).long()
 
-print("=========== Establishing Network Parameters: ===========")
+print("=========== Establishing Network Parameters ============")
 # Network hyperparameters
-print("=========== Establishing Network Parameters: ===========")
 learn_rate = .001
 epochs = 20
 b_frac = .1
@@ -154,6 +153,8 @@ test_accs = []  # store testing accuracies for each batch
 # Data iteration loop for training
 print("==================== Training Net ======================")
 for e in range(epochs):
+
+    batch_accs = []
     for b in range(batches):
         b_start = b * b_size
         b_end = (b+1) * b_size
@@ -169,7 +170,7 @@ for e in range(epochs):
         # Computes loss and accuracy of network predictions with respect to actual labels
         train_loss = loss(train_pred, batch_out)
         train_acc = accuracy(train_pred, batch_out)
-        train_accs.append(train_acc.item())
+        batch_accs.append(train_acc.item())
 
         # Back propagation of gradient
         train_loss.backward()
@@ -186,9 +187,14 @@ for e in range(epochs):
         val_acc = accuracy(test_pred, test_out.to(device))
         val_accs.append(val_acc.item())
 
-        print("Epoch: " + str(e+1) + ", Training accuracy: " +\
-        str(round(train_acc.item(),4)) + ", Validation accuracy: " +\
-        str(round(val_acc.item(),4)))
+    # take accuracy from each batch and report the average
+    train_accs.append(sum(batch_accs)/batches)
+
+    # report accuracies
+    print("Epoch: " + str(e+1) + ", Training accuracy: " +\
+    str(round(train_acc.item(),4)) + ", Validation accuracy: " +\
+    str(round(val_acc.item(),4)))
+
 
 # Testing iteration loop
 b_size = int(b_frac*test_in.shape[0])
