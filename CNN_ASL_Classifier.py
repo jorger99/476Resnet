@@ -60,22 +60,7 @@ train_num = 300 # the number of each letter to load for training (out of a total
 train_in = []
 train_out = []
 
-print("training on",train_num,"images per letter")
-"""
-print("Checking to see if we have presaved tensors")
-if os.path.exists('data/CNNtrain_in.pt') == True:
-    question = "Found files. Would you like to still generate new ones?"
-    response = str(input(question+' (y/n): ')).lower().strip()
-    if response[0] == 'n':
-        print("loading tensors")
-        torch.load('data/CNNtrain_in.pt', map_location=device)
-        torch.load('data/CNNtrain_out.pt', map_location=device)
-        torch.load('data/CNNtest_in.pt', map_location=device)
-        torch.load('data/CNNtest_out.pt', map_location=device)
-elif response[0] == 'y' or os.path.exists('data/CNNtrain_in.pt') == False:
-
-    print("Did not find presaved tensors. Generating new ones")
-"""
+print("Training on",train_num,"images per letter")
 
 print("Adding data from images to numpy arrays")
 time.sleep(2)
@@ -120,6 +105,7 @@ test_out = torch.from_numpy(test_out).long()
 
 print("=========== Establishing Network Parameters: ===========")
 # Network hyperparameters
+print("=========== Establishing Network Parameters: ===========")
 learn_rate = .001
 epochs = 20
 b_frac = .1
@@ -166,7 +152,7 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
-print("=========== Training Net ============")
+print("==================== Training Net ======================")
 for e in range(epochs):
     for b in range(batches):
         b_start = b * b_size
@@ -217,3 +203,8 @@ for b in range(batches):
         test_accs.append(accuracy(test_pred, batch_out).item())
 
 print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))
+
+
+# Save data for plotting purposes
+np.save("data/CNN_val_accs.npy", val_accs)
+np.save("data/CNN_train_accs.npy", train_accs)
