@@ -6,14 +6,6 @@ Created on Thu May 14 23:04:08 2020
 @author: alex
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May  6 17:38:21 2020
-
-@author: alex
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -55,7 +47,7 @@ letter_lookup = {letter: i for i, letter in enumerate(["A", "B", "C", "D", "E", 
                                                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"])}
 
 # Loads and shuffles training data in a pairwise manner
-train_num = 20 # the number of each letter to load for training (out of a total of 3000)
+train_num = 200 # the number of each letter to load for training (out of a total of 3000)
 train_in = []
 train_out = []
 for letter in letter_lookup.keys():
@@ -67,7 +59,7 @@ for letter in letter_lookup.keys():
 train_in, train_out = unison_shuffled_copies(np.array(train_in), np.array(train_out))
 
 # Loads and shuffles testing data in a pairwise manner
-test_num = 20 # the number of each letter to load for training (out of a total of 3000)
+test_num = 50 # the number of each letter to load for training
 test_in = []
 test_out = []
 for letter in letter_lookup.keys():
@@ -158,7 +150,6 @@ for e in range(epochs):
 
 # Testing iteration loop
 test_accs = []
-# Batch size recalculated for test data
 b_size = int(b_frac*test_in.shape[0])
 for b in range(batches):
         b_start = b * b_size
