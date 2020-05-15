@@ -12,6 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as opt
+import time
 from PIL import Image
 
 seed = 7
@@ -30,8 +31,8 @@ print("Setting path to:", IMG_PATH)
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
-	if i % 10 == 1:
-	    print(letter, i)
+        if i % (N/2) == 1:
+            print("adding:",letter, i+"/"+N)
         image = Image.open(IMG_PATH+letter+"/"+letter+str(i+1)+".jpg")
         array = np.asarray(image)
         arrays.append(array)
@@ -52,11 +53,14 @@ letter_lookup = {letter: i for i, letter in enumerate(["A", "B", "C", "D", "E", 
                                                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"])}
 
 # Loads and shuffles training data in a pairwise manner
-train_num = 3000 # the number of each letter to load for training (out of a total of 3000)
+train_num = 1000 # the number of each letter to load for training (out of a total of 3000)
 train_in = []
 train_out = []
 
+print("training on",train_num,"images per letter")
 print("adding letters to numpy arrays")
+time.sleep(3)
+
 for letter in letter_lookup.keys():
     arrays = load_images(letter,train_num)
     for array in arrays:
