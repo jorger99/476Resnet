@@ -31,8 +31,6 @@ ResNet50Preprocessor = keras.applications.ResNet50(
 
 )
 
-
-
 # Define some functions to make stuff smoother later on
 def load_images(letter, N = 10):
     arrays = []
@@ -59,7 +57,7 @@ letter_range = 0, 1
 # This is a moderately long process which converts the images into respective 2048 vectors and saves them in a similar format to the images
 for letter in letter_lookup.keys():
     print(letter, end=' ')
-    np.save( ARRAY_PATH+"/"+str(number)+letter+".npy", ResNet50Preprocessor.predict(load_images(letter,number)))
+    np.save(ARRAY_PATH+"/"+str(number)+letter+".npy", ResNet50Preprocessor.predict(load_images(letter,number)))
 print("\nFinished!")
 
 
@@ -115,8 +113,15 @@ history = model.fit(
     verbose = 0,
     epochs =  10,
     batch_size=32)
-plt.plot(np.arange(.5,len(history.history['loss'])+.5,1),history.history['accuracy'])
-#plt.show()
-plt.plot(np.arange(1,len(history.history['loss'])+1,1),history.history['val_accuracy'])
-plt.show()
+
+Resnet_val_accs = history.history['val_accuracy']
+Resnet_val_accs_xaxis = np.arange(1,len(history.history['loss'])+1,1)
+Resnet_train_accs = history.history['accuracy']
+Resnet_train_accs_xaxis = np.arange(.5,len(history.history['loss'])+.5,1)
+
+np.save("data/CNN_val_accs.npy", Resnet_val_accs)
+np.save("data/CNN_val_accs_xaxis.npy", Resnet_val_accs_xaxis)
+np.save("data/Resnet_val_accs.npy", Resnet_val_accs)
+np.save("data/Resnet_val_accs_xaxis.npy", Resnet_val_accs_xaxis)
+
 print('Final val_accuracy:', history.history['val_accuracy'][-1])
