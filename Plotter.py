@@ -73,6 +73,11 @@ plt.ylabel("Accuracy [%]")
 plt.text(x=12.2,y=0.7,s="Final CNN Val: {:.4f}%".format(CNN_val_accs[-1]*100))
 plt.text(x=12.2,y=0.65,s="Final Resnet Val: {:.1f}%".format(Resnet_val_accs[-1]*100))
 
+plt.text(x=12.2,y=0.5,s="CNN Time Elapsed: {:.3f}s".format(122.678))
+plt.text(x=12.2,y=0.45,s="Resnet Time Elapsed: {:.3f}s".format(0.339576))
+
+
+
 plt.title("Resnet Vs CNN Comparison: Identifying American Sign Language Handsigns")
 
 plt.legend()

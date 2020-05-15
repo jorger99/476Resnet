@@ -14,7 +14,7 @@ import torch.nn.functional as F
 import torch.optim as opt
 import time
 import os.path
-import timeit
+from timeit import default_timer as timer
 from PIL import Image
 
 
@@ -58,7 +58,7 @@ letter_lookup = {letter: i for i, letter in enumerate(["A", "B", "C", "D", "E", 
                                                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"])}
 
 # Loads and shuffles training data in a pairwise manner
-train_num = 300 # the number of each letter to load for training (out of a total of 3000)
+train_num = 250 # the number of each letter to load for training (out of a total of 3000)
 train_in = []
 train_out = []
 
@@ -153,7 +153,7 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
-start_time = timeit.timeit()
+start_time = timer()
 print("==================== Training Net ======================")
 for e in range(epochs):
 
@@ -182,7 +182,7 @@ for e in range(epochs):
         opti.step()
 
         # memory leaks
-        del batch_in, batch_out
+        del batch_in, batch_out, train_loss
         torch.cuda.empty_cache() # empty our cache per batch
 
     with torch.no_grad():
@@ -211,7 +211,7 @@ for b in range(batches):
         test_pred = net(batch_in)
         test_accs.append(accuracy(test_pred, batch_out).item())
 
-end_time = timeit.timeit()
+end_time = timer()
 print("Time Elapsed: ", end_time-start_time)
 
 print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches, 4)))

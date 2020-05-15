@@ -12,6 +12,7 @@ from keras import optimizers
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
+from timeit import default_timer as timer
 
 
 
@@ -99,6 +100,7 @@ if manual_val_split != None:
 
 optimizer = optimizers.Adam(learning_rate=0.004)
 
+start_time = timer()
 model = Sequential()
 model.add(Dropout(0.0))
 model.add(Dense(29, activation = 'softmax'))
@@ -114,6 +116,9 @@ history = model.fit(
     epochs =  10,
     batch_size=32)
 
+end_time = timer()
+
+print("Time Elapsed: ", end_time-start_time)
 print('Final val_accuracy:', history.history['val_accuracy'][-1])
 
 Resnet_val_accs = history.history['val_accuracy']
