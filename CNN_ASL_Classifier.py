@@ -34,7 +34,7 @@ print("Setting path to:", IMG_PATH)
 def load_images(letter, N = 10):
     arrays = []
     for i in range(N):
-        if i % (N) == 0:
+        if i === N:
             print("adding:",letter, i,"/",N)
         path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
         image = Image.open(path_string)
@@ -130,7 +130,7 @@ torch.save(test_out, 'data/CNNtest_out.pt')
 print("Establishing Network Parameters:")
 # Network hyperparameters
 learn_rate = .005
-epochs = 10
+epochs = 20
 b_frac = .1
 batches = int(1/b_frac)
 b_size = int(b_frac*train_in.shape[0])
@@ -174,6 +174,7 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
+print("=========== Training Net ============")
 for e in range(epochs):
     for b in range(batches):
         b_start = b * b_size
@@ -181,7 +182,7 @@ for e in range(epochs):
         batch_in = train_in[b_start : b_end].to(device)
         batch_out = train_out[b_start : b_end].to(device)
 
-        
+
         #print("Batch: ",b+1,":",batches)
 
         # Zeroes out gradient parameters
@@ -225,4 +226,4 @@ for b in range(batches):
         test_pred = net(batch_in)
         test_accs.append(accuracy(test_pred, batch_out).item())
 
-print("Testing accuracy: " + str(round(sum(test_accs)/batches,2)))
+print("Testing dataset accuracy: " + str(round(sum(test_accs)/batches,2)))
