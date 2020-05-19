@@ -102,9 +102,9 @@ test_out = torch.from_numpy(test_out).long()
 
 print("=========== Establishing Network Parameters ============")
 # Network hyperparameters
-learn_rate = .005
-epochs = 30
-b_frac = .1
+learn_rate = .001
+epochs = 20
+b_frac = .05
 batches = int(1/b_frac)
 b_size = int(b_frac*train_in.shape[0])
 
@@ -118,13 +118,13 @@ class Sign_Net(nn.Module):
     def __init__(self):
         super(Sign_Net, self).__init__()
         self.c1 = nn.Conv2d(3, 6, 5)
-        self.c2 = nn.Conv2d(6, 16, 5)
-        self.c2 = nn.Conv2d(16, 32, 5)
+        self.c2 = nn.Conv2d(6, 16, 4)
+        self.c3 = nn.Conv2d(16, 32, 3)
         self.drop = nn.Dropout(.6)
         self.c_drop = nn.Dropout2d(.6)
         self.pool = nn.MaxPool2d(2,2)
-        self.fc1 = nn.Linear(16 * 47**2, 100)
-        self.fc2 = nn.Linear(100, 29)
+        self.fc1 = nn.Linear(32 * 22**2, 200)
+        self.fc2 = nn.Linear(200, 29)
     def forward(self, x):
         # Pooled relu activated output from first convolutional layer with dropout
         x = self.pool(self.c_drop(F.relu(self.c1(x))))
@@ -133,7 +133,7 @@ class Sign_Net(nn.Module):
         # Pooled relu activated output from third convolutional layer with dropout
         x = self.pool(self.c_drop(F.relu(self.c3(x))))
         # Determining input dim for first fully connected layer
-        x = x.reshape(-1, 32 * 47**2)
+        x = x.reshape(-1, 32 * 22**2)
         # Relu activated output from first fully connected layer with dropout
         x = self.drop(F.relu(self.fc1(x)))
         # Activationless output from second fully connected layer
