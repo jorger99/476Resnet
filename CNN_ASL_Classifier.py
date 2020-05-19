@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu May 14 23:04:08 2020
-
-@author: alex
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,12 +27,12 @@ IMG_PATH = "asl-alphabet_train/"
 print("Setting path to:", IMG_PATH)
 
 # Functions for loading images, shuffling data, and calculating accuracy of network predictions
-def load_images(letter, N = 10):
+def load_images(letter, N = 10, offset=0):
     arrays = []
     for i in range(N):
         if i == N:
             print("adding:",letter, i,"/",N)
-        path_string = IMG_PATH+letter+"/"+letter+str(i+1)+".jpg"
+        path_string = IMG_PATH+letter+"/"+letter+str(i+1+offset)+".jpg"
         image = Image.open(path_string)
         array = np.asarray(image)
         arrays.append(array)
@@ -81,7 +76,7 @@ test_num = 50 # the number of each letter to load for testing
 test_in = []
 test_out = []
 for letter in letter_lookup.keys():
-    arrays = load_images(letter,test_num)
+    arrays = load_images(letter,test_num, offset=700)
     for array in arrays:
         test_in.append(array)
         test_out.append(letter_lookup[letter])
@@ -124,14 +119,14 @@ class Sign_Net(nn.Module):
         super(Sign_Net, self).__init__()
         self.c1 = nn.Conv2d(3, 6, 5)
         self.c2 = nn.Conv2d(6, 16, 5)
-        self.c_drop = nn.Dropout2d(.4)
+        self.c_drop = nn.Dropout2d(.5)
         self.pool = nn.MaxPool2d(2,2)
         self.fc1 = nn.Linear(16 * 47**2, 100)
         self.fc2 = nn.Linear(100, 29)
 
     def forward(self, x):
         # Pooled relu activated output from first convolutional layer
-        x = self.pool(F.relu(self.c1(x)))
+        x = self.pool(self.c_drop(F.relu(self.c1(x))))
         # Dropout of 40% on second convolutional layer
         x = self.c_drop(self.c2(x))
         # Pooled relu activated output from second convolutional layer
@@ -139,7 +134,7 @@ class Sign_Net(nn.Module):
         # Determining input dim for first fully connected layer
         x = x.reshape(-1, 16 * 47**2)
         # Relu activated output from first fully connected layer
-        x = F.relu(self.fc1(x))
+        x = self.c_drop(F.relu(self.fc1(x)))
         # Activationless output from second fully connected layer
         x = self.fc2(x)
         return x
@@ -153,7 +148,6 @@ val_accs = [] # Stores validation accuracies
 test_accs = []  # store testing accuracies for each batch
 
 # Data iteration loop for training
-start_time = timer()
 print("==================== Training Net ======================")
 for e in range(epochs):
 
@@ -198,6 +192,7 @@ for e in range(epochs):
     str(round(train_acc.item(),4)) + ", Validation accuracy: " +\
     str(round(val_acc.item(),4)))
 
+start_time = timer()
 
 # Testing iteration loop
 b_size = int(b_frac*test_in.shape[0])
