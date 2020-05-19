@@ -1,6 +1,25 @@
 # 476Resnet
 Machine Learning 476 @ UMDCP, Cameron/Alex/Angel/Jorge Final Project
 
+
+# How to Run this Code
+
+(1) clone this repo into its own folder
+
+(2) create an empty directory called "data" so the .py files have somewhere to store their saved .npy
+
+(3) download the dataset from Kaggle at [this link](https://www.kaggle.com/grassknoted/asl-alphabet).
+
+- (A) download the .zip file for the dataset, and unzip it into the directory, making sure the images are only one folder deep (e.g. `/asl-alphabet_train/A/A1.jpg`, instead of `asl-alphabet_train/asl-alphabet_train/A/A1.jpg`) which will happen when unzipping
+   
+- (B) if only using a terminal, use the kaggle API: `pip3 install kaggle`, `kaggle datasets download -d grassknoted/asl-alphabet`, then `mv` and `unzip` the file, and finally use `rsync` to fix the images being two folders deep
+   
+(4) run the python scripts with `python3 <scriptname>.py`
+
+(5) run the plotting script `python3 Plotter.py`
+
+
+# Intro
 We are comparing two strategies for image classification
 the first is using ResNet-50 as a feature extractor to pre-process the data and feed the output into our densely connected network, which will be presented by Cameron
 and a convolutional neural net to directly classify the images, which will be presented by Alex
